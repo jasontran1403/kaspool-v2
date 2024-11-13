@@ -1,35 +1,48 @@
 import { Stats, OrbitControls, Environment } from '@react-three/drei';
-import { Canvas, useLoader } from '@react-three/fiber';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader';
-import beeModel from "../assets/model/pyramid_glas_gray.glb"; // 3D model
+import { Canvas, useLoader, useFrame } from '@react-three/fiber';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { AnimationMixer } from 'three';
+import beeModel from "../assets/model/pyramid_glass_animation.glb";
 import IMAGE from "../assets/model/night-9.jpg";
-import TrustWalletConnect from "../components/TrustWalletConnect"; // Connect Wallet component
+import TrustWalletConnect from "../components/TrustWalletConnect";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 const cor = [
-    {
-        x: 1,
-        y: 2,
-        z: 3
-    },
-    {
-        x: 2,
-        y: 3,
-        z: 4
-    },
-    {
-        x: 4,
-        y: 5,
-        z: 6
-    }
-]
+    { x: 1, y: 2, z: 3 },
+    { x: 2, y: 3, z: 4 },
+    { x: 4, y: 5, z: 6 }
+];
+
+// Separate Model component for Canvas context
+const Model = () => {
+    const gltf = useLoader(GLTFLoader, beeModel);
+    const mixer = useRef(null);
+
+    useEffect(() => {
+        if (gltf.animations && gltf.animations.length > 0) {
+            mixer.current = new AnimationMixer(gltf.scene);
+            const action1 = mixer.current.clipAction(gltf.animations[0]);
+            const action2 = mixer.current.clipAction(gltf.animations[1]);
+            const action3 = mixer.current.clipAction(gltf.animations[2]);
+
+            action1.play();
+            action2.play();
+            action3.play();
+        }
+    }, [gltf]);
+
+    useFrame((state, delta) => {
+        mixer.current?.update(delta);
+    });
+
+    return <primitive object={gltf.scene} position={[0, 10, 0]} />;
+};
 
 const Pyramid = () => {
-    const gltf = useLoader(GLTFLoader, beeModel);
-    let count = 1;
     const [corCount, setCorCount] = useState(0);
+    let count = 1;
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -37,12 +50,11 @@ const Pyramid = () => {
         }, 3000);
 
         toast.dismiss();
-        return () => clearInterval(interval); // Clean up on component unmount
+        return () => clearInterval(interval);
     }, []);
 
     const notify = () => {
         toast.dismiss();
-
         toast(`🦄 Wow!!Wow!!Wow!!Wow so easy ${count++}!`, {
             position: "bottom-center",
             autoClose: false,
@@ -53,18 +65,18 @@ const Pyramid = () => {
             draggable: false,
             progress: undefined,
             theme: "light",
-            closeButton: false // This will remove the close button
-        })
+            closeButton: false
+        });
     };
 
     const next = () => {
         console.log(cor[corCount]);
-        setCorCount(corCount+1);
+        setCorCount((prev) => (prev + 1) % cor.length);
     };
 
     const prev = () => {
         console.log(cor[corCount]);
-        setCorCount(corCount-1);
+        setCorCount((prev) => (prev - 1 + cor.length) % cor.length);
     };
 
     return (
@@ -87,20 +99,18 @@ const Pyramid = () => {
             </header>
 
             <Canvas camera={{ position: [20, 35, 35] }}>
-                <Environment
-                    files={IMAGE}
-                    background
-                    backgroundBlurriness={0.07}
-                />
+                <Environment files={IMAGE} background backgroundBlurriness={0.07} />
                 <directionalLight position={[3.3, 1.0, 4.4]} intensity={9000} />
-                <primitive object={gltf.scene} position={[0, 10, 0]} />
+                <Model />
                 <OrbitControls target={[0, 1, 0]} autoRotate />
                 {/* <Stats /> */}
             </Canvas>
+            
             <div className="button">
-                <button onClick={() => prev()}> Prev </button>
-                <button onClick={() => next()}> Next </button>
+                <button onClick={prev}> Prev </button>
+                <button onClick={next}> Next </button>
             </div>
+            
             <div className="hashrate-container">
                 <ToastContainer
                     position="bottom-center"
@@ -112,8 +122,7 @@ const Pyramid = () => {
                 />
             </div>
         </div>
-
-    )
-}
+    );
+};
 
 export default Pyramid;
