@@ -43,6 +43,14 @@ const Model = ({ rotation, actionIndex, onActionComplete }) => {
                     action.clampWhenFinished = true;
 
                     action.play();
+                } else {
+                    const action = mixer.current.clipAction(gltf.animations[actionIndex - 2]);
+
+                    action.reset();
+                    action.setLoop(THREE.LoopOnce);
+                    action.clampWhenFinished = true;
+
+                    action.play();
                 }
             }
 
@@ -72,34 +80,35 @@ const Model = ({ rotation, actionIndex, onActionComplete }) => {
                 y: rotation.y,
                 z: rotation.z,
                 duration: 1,
+                ease: "power2.inOut"
             });
         }
 
-        // if (actionIndex === 1) {
-        //     gsap.to(modelRef.current.rotation, {
-        //         y: modelRef.current.rotation.y - THREE.MathUtils.degToRad(-50),
-        //         duration: 1.2, // Thời gian chuyển động
-        //         ease: "power2.inOut"
-        //     });
-        // } else if (actionIndex === 2) {
-        //     gsap.to(modelRef.current.rotation, {
-        //         y: modelRef.current.rotation.y - THREE.MathUtils.degToRad(280),
-        //         duration: 1.2, // Thời gian chuyển động
-        //         ease: "power2.inOut"
-        //     });
-        // } else if (actionIndex === 3) {
-        //     gsap.to(modelRef.current.rotation, {
-        //         y: modelRef.current.rotation.y - THREE.MathUtils.degToRad(280),
-        //         duration: 1.2, // Thời gian chuyển động
-        //         ease: "power2.inOut"
-        //     });
-        // } else if (actionIndex === 4) {
-        //     gsap.to(modelRef.current.rotation, {
-        //         y: modelRef.current.rotation.y - THREE.MathUtils.degToRad(50),
-        //         duration: 1.2, // Thời gian chuyển động
-        //         ease: "power2.inOut"
-        //     });
-        // }
+        if (actionIndex === 1) {
+            gsap.to(modelRef.current.rotation, {
+                y: modelRef.current.rotation.y - THREE.MathUtils.degToRad(-50),
+                duration: 1.2, // Thời gian chuyển động
+                ease: "power2.inOut"
+            });
+        } else if (actionIndex === 2) {
+            gsap.to(modelRef.current.rotation, {
+                y: modelRef.current.rotation.y - THREE.MathUtils.degToRad(280),
+                duration: 1.2, // Thời gian chuyển động
+                ease: "power2.inOut"
+            });
+        } else if (actionIndex === 3) {
+            gsap.to(modelRef.current.rotation, {
+                y: modelRef.current.rotation.y - THREE.MathUtils.degToRad(280),
+                duration: 1.2, // Thời gian chuyển động
+                ease: "power2.inOut"
+            });
+        } else if (actionIndex === 4) {
+            gsap.to(modelRef.current.rotation, {
+                y: modelRef.current.rotation.y - THREE.MathUtils.degToRad(50),
+                duration: 1.2, // Thời gian chuyển động
+                ease: "power2.inOut"
+            });
+        }
     }, [actionIndex]);
 
     return <primitive object={gltf.scene} ref={modelRef} position={[rotation.x, rotation.y, rotation.z]} />;
@@ -116,10 +125,15 @@ const Pyramid = () => {
         return (Math.random() * (max - min) + min).toFixed(2);
     };
 
+    useEffect(() => {
+        if (currentCoordinate.index === 0) {
+            setDisable(false);
+        }
+    }, [currentCoordinate]);
+
     const handleActionComplete = (index) => {
         setActiveModal(index); // Hiển thị modal tương ứng với actionIndex
         setRotate(true);
-        setDisable(false);
     };
 
     useEffect(() => {
