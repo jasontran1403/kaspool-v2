@@ -106,7 +106,7 @@ const TrustWalletConnect = ({ transparent, label }) => {
         onConnect={() => handleConnect()}
         onDisconnect={() => disconnectWallet()}
       />
-      <ToastContainer stacked />
+      
     </div>
   );
 };
