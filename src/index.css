@@ -126,9 +126,10 @@ body {
   position: absolute;
   display: flex;
   gap: 50px;
-  bottom: 10%;
+  bottom: 14%;
   left: 50%;
-  transform: translate(-50%, -12%);
+  transform: translate(-50%, -14%);
+  align-items: center;
 }
 
 /* Basic modal overlay with blur effect */
@@ -152,17 +153,21 @@ body {
   color: whitesmoke;
   border-radius: 8px;
   width: 900px;
+  min-width: auto;
   max-width: 90%;
-  height: auto;
+  max-height: 50svh;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  overflow: auto;
+  overflow-y: scroll;
   position: relative;
   backdrop-filter: blur(10px);
   /* Thêm hiệu ứng làm mờ */
-
 }
-
-
+.Modal__Content:focus {
+  outline: none; /* Removes focus-visible outline for accessibility */
+}
+.Modal__Content:focus-visible {
+  outline: none; /* Removes focus-visible outline for accessibility */
+}
 /* Header styles */
 .Modal__Header {
   font-size: 24px;
@@ -240,16 +245,23 @@ body {
 
 .button-item {
   width: 120px;
-  height: 40px;
+  height: 20px;
   color: black;
   color: whitesmoke;
   font-weight: bolder;
-  ;
 }
 
 .section-name {
+  min-width: 150px;
+  text-align: center;
   color: aquamarine;
   font-weight: bolder;
+}
+
+.input-coordinate {
+  width: 60px;
+  text-align: center;
+  margin: 5px;
 }
 
 .custom-toast {
@@ -257,6 +269,7 @@ body {
   color: whitesmoke;
   background-color: transparent;
 }
+
 
 /* Media query for mobile devices */
 @media (max-width: 768px) {
