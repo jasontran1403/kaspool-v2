@@ -47,7 +47,8 @@ const TrustWalletConnect = ({ transparent, label }) => {
       if (localStorage.getItem("walletAddress") !== activeAccount.address) {
         toast.success("Connect wallet success", {
           position: "top-right",
-          autoClose: 1000,
+          autoClose: 1200,
+          className: "connect-toast",
           onClose: (() => {
             window.location.reload();
           })
@@ -60,6 +61,7 @@ const TrustWalletConnect = ({ transparent, label }) => {
         toast.warning("Please switch your network to Binance Smart Chain", {
           position: "top-right",
           autoClose: 1500,
+          className: "connect-toast",
         });
       }
     }
@@ -71,6 +73,7 @@ const TrustWalletConnect = ({ transparent, label }) => {
         toast.warning("Please switch your network to Binance Smart Chain", {
           position: "top-right",
           autoClose: 1500,
+          className: "connect-toast",
         });
       }
     }

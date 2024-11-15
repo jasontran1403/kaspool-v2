@@ -271,6 +271,10 @@ body {
     /* Smooth transition */
   }
 
+  .connect-toast {
+    z-index: 999999;
+  }
+
   .slider {
     width: 100%;
     /* Adjust slider width */
