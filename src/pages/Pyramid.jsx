@@ -117,10 +117,9 @@ const Pyramid = () => {
     };
 
     const handleActionComplete = (index) => {
-        // setActiveModal(index); // Hiển thị modal tương ứng với actionIndex
+        setActiveModal(index); // Hiển thị modal tương ứng với actionIndex
         setRotate(true);
         setDisable(false);
-
     };
 
     useEffect(() => {
@@ -160,7 +159,7 @@ const Pyramid = () => {
         setCorCount(newIndex);
         setCurrentCoordinate(coordinates[newIndex]);
         setRotate(false);
-        // setDisable(true);
+        setDisable(true);
     };
 
     const prev = () => {
@@ -168,7 +167,7 @@ const Pyramid = () => {
         setCorCount(newIndex);
         setCurrentCoordinate(coordinates[newIndex]);
         setRotate(false);
-        // setDisable(true);
+        setDisable(true);
     };
 
     const closeModal = () => {
