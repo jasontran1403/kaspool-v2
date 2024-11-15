@@ -82,7 +82,10 @@ const Pyramid = () => {
     const [currentCoordinate, setCurrentCoordinate] = useState(coordinates[0]);
     const [activeModal, setActiveModal] = useState(null); // Trạng thái lưu modal đang mở
     const [isRotate, setRotate] = useState(true);
-    let count = 1;
+
+    const randomAmount = (min = 5, max = 200) => {
+        return (Math.random() * (max - min) + min).toFixed(2);
+    };
 
     const handleActionComplete = (index) => {
         console.log(`Action ${index} has completed.`);
@@ -101,18 +104,26 @@ const Pyramid = () => {
 
     const notify = () => {
         toast.dismiss();
-        toast(`🦄 Wow!!Wow!!Wow!!Wow so easy ${count++}!`, {
-            position: "bottom-center",
-            autoClose: false,
-            limit: 1,
-            hideProgressBar: true,
-            closeOnClick: false,
-            pauseOnHover: false,
-            draggable: false,
-            progress: undefined,
-            theme: "light",
-            closeButton: false
-        });
+        toast(
+            <div>
+                <span role="img" aria-label="kaspa">🦄 KASPA</span><br />
+                Mined {randomAmount(5, 200)}KAS at 00:00:00 24/12/2024
+            </div>,
+            {
+                position: "bottom-center",
+                autoClose: false,
+                limit: 1,
+                hideProgressBar: true,
+                closeOnClick: false,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+                theme: "light",
+                closeButton: false,
+                className: "custom-toast",
+            }
+        );
+        
     };
 
     const next = () => {
