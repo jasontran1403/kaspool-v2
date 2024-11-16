@@ -3,6 +3,7 @@ import { Canvas, useLoader, useFrame } from '@react-three/fiber';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { AnimationMixer } from 'three';
 import { useEffect, useState, useRef } from 'react';
+import { GrCaretNext, GrCaretPrevious  } from "react-icons/gr";
 import gsap from 'gsap';
 import beeModel from "../assets/model/pyramid_glass_full.glb";
 import IMAGE from "../assets/model/night-9.jpg";
@@ -43,14 +44,6 @@ const Model = ({ rotation, actionIndex, onActionComplete }) => {
 
                 action.play();
             } else if(actionIndex == 4){
-                const action = mixer.current.clipAction(gltf.animations[actionIndex]);
-
-                action.reset();
-                action.setLoop(THREE.LoopOnce);
-                action.clampWhenFinished = true;
-
-                action.play();
-            } else {
                 const action = mixer.current.clipAction(gltf.animations[4]);
 
                 action.reset();
@@ -130,6 +123,7 @@ const Pyramid = () => {
     const [activeModal, setActiveModal] = useState(null); // Trạng thái lưu modal đang mở
     const [isRotate, setRotate] = useState(true);
     const [isDisable, setDisable] = useState(false);
+    let toastId = null;
 
     const randomAmount = (min = 5, max = 200) => {
         return (Math.random() * (max - min) + min).toFixed(2);
@@ -156,13 +150,20 @@ const Pyramid = () => {
     }, []);
 
     const notify = () => {
-        toast.dismiss();
-        toast(
+        const content = (
             <div>
                 <span role="img" aria-label="kaspa">🦄 KASPA</span><br />
-                Mined {randomAmount(5, 200)}KAS at 00:00:00 24/12/2024
-            </div>,
-            {
+                Mined {randomAmount(5, 200)} KAS at 00:00:00 24/12/2024
+            </div>
+        );
+    
+        // Check if the toast already exists, update it instead of dismissing
+        if (toastId) {
+            toast.update(toastId, {
+                render: content,
+            });
+        } else {
+            toastId = toast(content, {
                 position: "bottom-center",
                 autoClose: false,
                 limit: 1,
@@ -174,11 +175,12 @@ const Pyramid = () => {
                 theme: "light",
                 closeButton: false,
                 className: "custom-toast",
-            }
-        );
+            });
+        }
     };
 
     const next = () => {
+        if (isDisable) return;
         const newIndex = (corCount + 1) % coordinates.length;
         setCorCount(newIndex);
         setCurrentCoordinate(coordinates[newIndex]);
@@ -187,6 +189,7 @@ const Pyramid = () => {
     };
 
     const prev = () => {
+        if (isDisable) return;
         const newIndex = (corCount - 1 + coordinates.length) % coordinates.length;
         setCorCount(newIndex);
         setCurrentCoordinate(coordinates[newIndex]);
@@ -230,9 +233,9 @@ const Pyramid = () => {
             </Canvas>
 
             <div className="button-container">
-                <button disabled={isDisable} className="button-item" onClick={prev}>Prev</button>
+                <GrCaretPrevious className={`button-item ${!isDisable ? 'active' : 'inactive'}`}  onClick={prev} />
                 <button disabled className="button-item section-name">{currentCoordinate.name}</button>
-                <button disabled={isDisable} className="button-item" onClick={next}>Next</button>
+                <GrCaretNext className={`button-item ${!isDisable ? 'active' : 'inactive'}`}  onClick={next} />
             </div>
             <ModalSection1 isOpen={activeModal === 1} onClose={closeModal} header={currentCoordinate.name} />
             <ModalSection2 isOpen={activeModal === 2} onClose={closeModal} header={currentCoordinate.name} />

@@ -243,10 +243,19 @@ body {
   transform: translate(-50%, -30%);
 }
 
+.active {
+  cursor: pointer;
+}
+
+.inactive {
+  cursor:not-allowed;
+}
+
 .button-item {
   width: 120px;
   height: 20px;
   color: black;
+  text-align: center;
   color: whitesmoke;
   font-weight: bolder;
 }
@@ -265,9 +274,30 @@ body {
 }
 
 .custom-toast {
-  width: 50svw;
+  position: relative; /* Để tạo layer cho pseudo-element */
+  width: 10svw;
+  padding: 10px;
   color: whitesmoke;
   background-color: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.6); /* Viền ngoài */
+  border-radius: 10px; /* Góc bo tròn */
+  animation: glowing 1s infinite;
+}
+
+
+@keyframes glowing {
+  0% {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.8), 
+                0 0 10px rgba(255, 255, 255, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(255, 255, 255, 1), 
+                0 0 30px rgba(255, 255, 255, 0.7);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.8), 
+                0 0 10px rgba(255, 255, 255, 0.5);
+  }
 }
 
 
@@ -297,8 +327,9 @@ body {
 
   .custom-toast {
     width: 90svw;
-    max-width: 90%;
     display: flex;
+    margin: 0 auto;
+    margin-bottom: 20px;
     justify-content: center;
     align-items: center;
     text-align: center;
