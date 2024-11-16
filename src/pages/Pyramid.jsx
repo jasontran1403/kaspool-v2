@@ -88,11 +88,11 @@ const Model = ({ rotation, actionIndex, onActionComplete }) => {
         if (actionIndex === 0) {
             targetRotationY = THREE.MathUtils.degToRad(0);
         } else if (actionIndex === 1) {
-            targetRotationY = THREE.MathUtils.degToRad(50);  // Quay 50 độ theo chiều ngược chiều kim đồng hồ
+            targetRotationY = THREE.MathUtils.degToRad(40);  // Quay 50 độ theo chiều ngược chiều kim đồng hồ
         } else if (actionIndex === 2) {
-            targetRotationY = THREE.MathUtils.degToRad(120);  // Quay 280 độ theo chiều kim đồng hồ
+            targetRotationY = THREE.MathUtils.degToRad(90);  // Quay 280 độ theo chiều kim đồng hồ
         } else if (actionIndex === 3) {
-            targetRotationY = THREE.MathUtils.degToRad(210);  // Quay 280 độ theo chiều kim đồng hồ
+            targetRotationY = THREE.MathUtils.degToRad(180);  // Quay 280 độ theo chiều kim đồng hồ
         } else if (actionIndex === 4) {
             targetRotationY = THREE.MathUtils.degToRad(150);   // Quay 50 độ theo chiều ngược chiều kim đồng hồ
         }
@@ -121,7 +121,7 @@ const Pyramid = () => {
     };
 
     useEffect(() => {
-        if (currentCoordinate.index <= 3) {
+        if (currentCoordinate.index <= 4) {
             setDisable(false);
         }
     }, [currentCoordinate]);
@@ -168,7 +168,7 @@ const Pyramid = () => {
         setCorCount(newIndex);
         setCurrentCoordinate(coordinates[newIndex]);
         setRotate(false);
-        // setDisable(true);
+        setDisable(true);
     };
 
     const prev = () => {
@@ -176,7 +176,7 @@ const Pyramid = () => {
         setCorCount(newIndex);
         setCurrentCoordinate(coordinates[newIndex]);
         setRotate(false);
-        // setDisable(true);
+        setDisable(true);
     };
 
     const closeModal = () => {
