@@ -4,7 +4,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { AnimationMixer } from 'three';
 import { useEffect, useState, useRef } from 'react';
 import gsap from 'gsap';
-import beeModel from "../assets/model/pyramid_glass_animation.glb";
+import beeModel from "../assets/model/pyramid_glass_full.glb";
 import IMAGE from "../assets/model/night-9.jpg";
 import TrustWalletConnect from "../components/TrustWalletConnect";
 import { toast } from 'react-toastify';
@@ -20,7 +20,7 @@ const coordinates = [
     { index: 1, name: "KASPOOL", camera: { x: 15, y: 5, z: 25 }, rotation: { x: -5, y: 15, z: 5 }, content: "" },
     { index: 2, name: "FEATURES", camera: { x: -5, y: 5, z: 30 }, rotation: { x: 5, y: 15, z: 5 }, content: "" },
     { index: 3, name: "BLOCKDAG", camera: { x: 10, y: 10, z: 40 }, rotation: { x: 5, y: 10, z: 20 }, content: "" },
-    { index: 4, name: "TEAM", camera: { x: -10, y: 10, z: 50 }, rotation: { x: 0, y: 22, z: 10 }, content: "" }
+    { index: 4, name: "TEAM", camera: { x: -10, y: 10, z: 50 }, rotation: { x: 0, y: 35, z: 20 }, content: "" }
 ];
 
 const Model = ({ rotation, actionIndex, onActionComplete }) => {
@@ -33,25 +33,23 @@ const Model = ({ rotation, actionIndex, onActionComplete }) => {
 
         if (gltf.animations && gltf.animations.length > 0) {
             mixer.current = new AnimationMixer(gltf.scene);
-
+            
             if (actionIndex >= 1 && actionIndex <= 4) {
-                if (actionIndex <= 3) {
-                    const action = mixer.current.clipAction(gltf.animations[actionIndex - 1]);
+                const action = mixer.current.clipAction(gltf.animations[actionIndex - 1]);
 
-                    action.reset();
-                    action.setLoop(THREE.LoopOnce);
-                    action.clampWhenFinished = true;
+                action.reset();
+                action.setLoop(THREE.LoopOnce);
+                action.clampWhenFinished = true;
 
-                    action.play();
-                } else {
-                    const action = mixer.current.clipAction(gltf.animations[actionIndex - 2]);
+                action.play();
+            } else {
+                const action = mixer.current.clipAction(gltf.animations[4]);
 
-                    action.reset();
-                    action.setLoop(THREE.LoopOnce);
-                    action.clampWhenFinished = true;
+                action.reset();
+                action.setLoop(THREE.LoopOnce);
+                action.clampWhenFinished = true;
 
-                    action.play();
-                }
+                action.play();
             }
 
             mixer.current.addEventListener("finished", () => {
@@ -84,32 +82,29 @@ const Model = ({ rotation, actionIndex, onActionComplete }) => {
             });
         }
 
-        if (actionIndex === 1) {
-            gsap.to(modelRef.current.rotation, {
-                y: modelRef.current.rotation.y - THREE.MathUtils.degToRad(-50),
-                duration: 1.2, // Thời gian chuyển động
-                ease: "power2.inOut"
-            });
+        // Góc quay cố định cho mỗi actionIndex
+        let targetRotationY = modelRef.current.rotation.y;
+
+        if (actionIndex === 0) {
+            targetRotationY = THREE.MathUtils.degToRad(0);
+        } else if (actionIndex === 1) {
+            targetRotationY = THREE.MathUtils.degToRad(50);  // Quay 50 độ theo chiều ngược chiều kim đồng hồ
         } else if (actionIndex === 2) {
-            gsap.to(modelRef.current.rotation, {
-                y: modelRef.current.rotation.y - THREE.MathUtils.degToRad(280),
-                duration: 1.2, // Thời gian chuyển động
-                ease: "power2.inOut"
-            });
+            targetRotationY = THREE.MathUtils.degToRad(120);  // Quay 280 độ theo chiều kim đồng hồ
         } else if (actionIndex === 3) {
-            gsap.to(modelRef.current.rotation, {
-                y: modelRef.current.rotation.y - THREE.MathUtils.degToRad(280),
-                duration: 1.2, // Thời gian chuyển động
-                ease: "power2.inOut"
-            });
+            targetRotationY = THREE.MathUtils.degToRad(210);  // Quay 280 độ theo chiều kim đồng hồ
         } else if (actionIndex === 4) {
-            gsap.to(modelRef.current.rotation, {
-                y: modelRef.current.rotation.y - THREE.MathUtils.degToRad(50),
-                duration: 1.2, // Thời gian chuyển động
-                ease: "power2.inOut"
-            });
+            targetRotationY = THREE.MathUtils.degToRad(150);   // Quay 50 độ theo chiều ngược chiều kim đồng hồ
         }
+
+        // Xoay về góc cố định thay vì cộng dồn vào góc hiện tại
+        gsap.to(modelRef.current.rotation, {
+            y: targetRotationY,
+            duration: 1.2,
+            ease: "power2.inOut"
+        });
     }, [actionIndex]);
+
 
     return <primitive object={gltf.scene} ref={modelRef} position={[rotation.x, rotation.y, rotation.z]} />;
 };
@@ -126,7 +121,7 @@ const Pyramid = () => {
     };
 
     useEffect(() => {
-        if (currentCoordinate.index === 0) {
+        if (currentCoordinate.index <= 3) {
             setDisable(false);
         }
     }, [currentCoordinate]);
@@ -173,7 +168,7 @@ const Pyramid = () => {
         setCorCount(newIndex);
         setCurrentCoordinate(coordinates[newIndex]);
         setRotate(false);
-        setDisable(true);
+        // setDisable(true);
     };
 
     const prev = () => {
@@ -181,7 +176,7 @@ const Pyramid = () => {
         setCorCount(newIndex);
         setCurrentCoordinate(coordinates[newIndex]);
         setRotate(false);
-        setDisable(true);
+        // setDisable(true);
     };
 
     const closeModal = () => {
@@ -216,7 +211,7 @@ const Pyramid = () => {
                     actionIndex={currentCoordinate.index}
                     onActionComplete={handleActionComplete}
                 />
-                <OrbitControls autoRotate={false} enableZoom={false} />
+                <OrbitControls autoRotate={false} enableZoom={true} />
             </Canvas>
 
             <div className="button-container">
