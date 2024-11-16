@@ -314,6 +314,14 @@ body {
     /* Smooth transition */
   }
 
+  .button-container {
+    gap: 10px;
+    bottom: 16%;
+    left: 50%;
+    transform: translate(-50%, -16%);
+    align-items: center;
+  }
+
   .connect-toast {
     z-index: 999999;
   }
