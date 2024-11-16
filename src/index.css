@@ -314,6 +314,10 @@ body {
     /* Smooth transition */
   }
 
+  .Modal__Content {
+    margin-top: -180px;
+  }
+
   .button-container {
     gap: 10px;
     bottom: 16%;
