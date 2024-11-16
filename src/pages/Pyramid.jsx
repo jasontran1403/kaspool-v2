@@ -20,7 +20,7 @@ const coordinates = [
     { index: 1, name: "KASPOOL", camera: { x: 15, y: 5, z: 25 }, rotation: { x: -5, y: 15, z: 5 }, content: "" },
     { index: 2, name: "FEATURES", camera: { x: -5, y: 5, z: 30 }, rotation: { x: 5, y: 15, z: 5 }, content: "" },
     { index: 3, name: "BLOCKDAG", camera: { x: 10, y: 10, z: 40 }, rotation: { x: 5, y: 10, z: 20 }, content: "" },
-    { index: 4, name: "TEAM", camera: { x: -10, y: 10, z: 50 }, rotation: { x: 0, y: 35, z: 20 }, content: "" }
+    { index: 4, name: "TEAM", camera: { x: -10, y: 10, z: 50 }, rotation: { x: 0, y: 25, z: 10 }, content: "" }
 ];
 
 const Model = ({ rotation, actionIndex, onActionComplete }) => {
@@ -34,8 +34,16 @@ const Model = ({ rotation, actionIndex, onActionComplete }) => {
         if (gltf.animations && gltf.animations.length > 0) {
             mixer.current = new AnimationMixer(gltf.scene);
             
-            if (actionIndex >= 1 && actionIndex <= 4) {
+            if (actionIndex >= 1 && actionIndex <= 3) {
                 const action = mixer.current.clipAction(gltf.animations[actionIndex - 1]);
+
+                action.reset();
+                action.setLoop(THREE.LoopOnce);
+                action.clampWhenFinished = true;
+
+                action.play();
+            } else if(actionIndex == 4){
+                const action = mixer.current.clipAction(gltf.animations[actionIndex]);
 
                 action.reset();
                 action.setLoop(THREE.LoopOnce);
@@ -84,21 +92,28 @@ const Model = ({ rotation, actionIndex, onActionComplete }) => {
 
         // Góc quay cố định cho mỗi actionIndex
         let targetRotationY = modelRef.current.rotation.y;
+        let targetRotationX = modelRef.current.rotation.y;
 
         if (actionIndex === 0) {
             targetRotationY = THREE.MathUtils.degToRad(0);
+            targetRotationX = 0;
         } else if (actionIndex === 1) {
             targetRotationY = THREE.MathUtils.degToRad(40);  // Quay 50 độ theo chiều ngược chiều kim đồng hồ
+            targetRotationX = 0;
         } else if (actionIndex === 2) {
             targetRotationY = THREE.MathUtils.degToRad(90);  // Quay 280 độ theo chiều kim đồng hồ
+            targetRotationX = 0;
         } else if (actionIndex === 3) {
             targetRotationY = THREE.MathUtils.degToRad(180);  // Quay 280 độ theo chiều kim đồng hồ
+            targetRotationX = 0;
         } else if (actionIndex === 4) {
             targetRotationY = THREE.MathUtils.degToRad(150);   // Quay 50 độ theo chiều ngược chiều kim đồng hồ
+            targetRotationX = THREE.MathUtils.degToRad(-20)
         }
 
         // Xoay về góc cố định thay vì cộng dồn vào góc hiện tại
         gsap.to(modelRef.current.rotation, {
+            x: targetRotationX,
             y: targetRotationY,
             duration: 1.2,
             ease: "power2.inOut"
@@ -121,7 +136,7 @@ const Pyramid = () => {
     };
 
     useEffect(() => {
-        if (currentCoordinate.index <= 4) {
+        if (currentCoordinate.index === 0) {
             setDisable(false);
         }
     }, [currentCoordinate]);
