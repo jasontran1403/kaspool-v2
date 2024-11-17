@@ -5,7 +5,7 @@ import { AnimationMixer } from 'three';
 import { useEffect, useState, useRef } from 'react';
 import { GrCaretNext, GrCaretPrevious } from "react-icons/gr";
 import gsap from 'gsap';
-import beeModel from "../assets/model/pyramid_glass_full.glb";
+import beeModel from "../assets/model/pyramid_glass_full_2.glb";
 import IMAGE from "../assets/model/night-9.jpg";
 import TrustWalletConnect from "../components/TrustWalletConnect";
 import { toast } from 'react-toastify';
@@ -56,9 +56,10 @@ const Model = ({ rotation, actionIndex, onActionComplete, isRetrieve }) => {
                 action.setLoop(THREE.LoopOnce);
                 action.clampWhenFinished = true;
 
-                timeoutAction = setTimeout(() => {
-                    action.play();
-                }, 2400);
+                action.play();
+                // timeoutAction = setTimeout(() => {
+                    
+                // }, 600);
             } else if (actionIndex == 4) {
                 const action = mixer.current.clipAction(gltf.animations[4]);
 
@@ -66,9 +67,10 @@ const Model = ({ rotation, actionIndex, onActionComplete, isRetrieve }) => {
                 action.setLoop(THREE.LoopOnce);
                 action.clampWhenFinished = true;
 
-                timeoutAction = setTimeout(() => {
-                    action.play();
-                }, 2400);
+                action.play();
+
+                // timeoutAction = setTimeout(() => {
+                // }, 600);
             } else if (actionIndex == 0 && isRetrieve) {
                 const action = mixer.current.clipAction(gltf.animations[3]);
                 action.reset();
@@ -78,9 +80,11 @@ const Model = ({ rotation, actionIndex, onActionComplete, isRetrieve }) => {
                 action.play();
             }
 
-            timeoutId = setTimeout(() => {
-                onActionComplete(actionIndex);
-            }, 1200);
+            mixer.current.addEventListener("finished", () => {
+                timeoutId = setTimeout(() => {
+                    onActionComplete(actionIndex);
+                }, 100);
+            });
         }
 
         return () => {

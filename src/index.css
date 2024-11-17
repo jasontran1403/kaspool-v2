@@ -320,7 +320,7 @@ body {
 
 .custom-toast {
   position: relative; /* Để tạo layer cho pseudo-element */
-  min-width: 10svw;
+  min-width: 12svw;
   padding: 10px;
   color: whitesmoke;
   background-color: transparent;
@@ -328,6 +328,7 @@ body {
   border-radius: 10px; /* Góc bo tròn */
   animation: glowing 1s infinite;
 }
+
 
 
 @keyframes glowing {
@@ -397,6 +398,13 @@ body {
     font-weight: bold;
   }
 
+}
+
+@media (max-width: 1919px) {
+  .custom-toast {
+    width: 25svw;
+    margin-left: -60px;
+  }
 }
 
 
