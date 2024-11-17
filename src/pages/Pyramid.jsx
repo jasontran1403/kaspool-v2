@@ -279,8 +279,6 @@ const Pyramid = () => {
 
             <div className="button-container">
                 <GrCaretPrevious className={`button-item ${!isDisable ? 'active' : 'active'}`} onClick={prev} />
-                <button disabled className="button-item section-name">{currentCoordinate.name}
-                </button>
                 <GrCaretNext className={`button-item ${!isDisable ? 'active' : 'active'}`} onClick={next} />
             </div>
             <ModalSection1 isOpen={activeModal === 1} isClosing={isClosing} onClose={closeModal} header={currentCoordinate.name} />
