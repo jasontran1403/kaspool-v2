@@ -1,22 +1,22 @@
 import Modal from 'react-modal';
 
-const ModalSection1 = ({ isOpen, onClose, header }) => {
+const ModalSection1 = ({ isOpen, onClose, header, isClosing  }) => {
+  
   return (
     <Modal
       isOpen={isOpen}
       onRequestClose={onClose}
       contentLabel="Example Modal"
-      className="Modal__Content" // Custom modal content class
+      className={`Modal__Content ${isClosing ? "closing" : "showing"}`}
       overlayClassName="Modal__Overlay" // Custom overlay class
       ariaHideApp={false} // This disables the aria-hidden on the app when the modal is open (optional)
     >
-      <div className="Modal__Header">{header}</div>
-      <button className="Modal__CloseButton" onClick={onClose}>×</button>
+      
+      <div className="Modal__Header" style={{ textAlign: "right" }}>{header}</div>
 
-      {/* Render HTML content safely */}
       <div
         className="Modal__Body"
-        style={{ lineHeight: "35px" }}
+        style={{ lineHeight: "35px", textAlign: "right" }}
       >
         <h1 style={{ fontSize: "24px", fontWeight: "bolder" }}>The Importance of Crypto</h1>
         <div className="item">

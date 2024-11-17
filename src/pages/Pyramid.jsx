@@ -1,9 +1,9 @@
 import { OrbitControls, Environment } from '@react-three/drei';
-import { Canvas, useLoader, useFrame } from '@react-three/fiber';
+import { Canvas, useLoader, useFrame, useThree } from '@react-three/fiber';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { AnimationMixer } from 'three';
 import { useEffect, useState, useRef } from 'react';
-import { GrCaretNext, GrCaretPrevious  } from "react-icons/gr";
+import { GrCaretNext, GrCaretPrevious } from "react-icons/gr";
 import gsap from 'gsap';
 import beeModel from "../assets/model/pyramid_glass_full.glb";
 import IMAGE from "../assets/model/night-9.jpg";
@@ -11,30 +11,44 @@ import TrustWalletConnect from "../components/TrustWalletConnect";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import * as THREE from 'three';
+import { PerspectiveCamera } from "@react-three/drei";
 import ModalSection1 from "../components/ModalSection1";
 import ModalSection2 from "../components/ModalSection2";
 import ModalSection3 from "../components/ModalSection3";
 import ModalSection4 from "../components/ModalSection4";
 
 const coordinates = [
-    { index: 0, name: "Default", camera: { x: 0, y: 0, z: 30 }, rotation: { x: 0, y: 8, z: -5 }, content: "" },
-    { index: 1, name: "KASPOOL", camera: { x: 15, y: 5, z: 25 }, rotation: { x: -5, y: 15, z: 5 }, content: "" },
-    { index: 2, name: "FEATURES", camera: { x: -5, y: 5, z: 30 }, rotation: { x: 5, y: 15, z: 5 }, content: "" },
-    { index: 3, name: "BLOCKDAG", camera: { x: 10, y: 10, z: 40 }, rotation: { x: 5, y: 10, z: 20 }, content: "" },
-    { index: 4, name: "TEAM", camera: { x: -10, y: 10, z: 50 }, rotation: { x: 0, y: 25, z: 10 }, content: "" }
+    { index: 0, name: "Default", rotation: { x: 0, y: 0, z: 0 }, content: "" },
+    { index: 1, name: "KASPOOL", rotation: { x: -5, y: 15, z: 5 }, content: "" },
+    { index: 2, name: "FEATURES", rotation: { x: 5, y: 15, z: 5 }, content: "" },
+    { index: 3, name: "BLOCKDAG", rotation: { x: 5, y: -5, z: 5 }, content: "" },
+    { index: 4, name: "TEAM", rotation: { x: 0, y: 25, z: 15 }, content: "" }
 ];
 
-const Model = ({ rotation, actionIndex, onActionComplete }) => {
+const Model = ({ rotation, actionIndex, onActionComplete, isRetrieve }) => {
     const gltf = useLoader(GLTFLoader, beeModel);
     const mixer = useRef(null);
     const modelRef = useRef();
+    const { camera } = useThree();
+
+    const resetCameraPosition = () => {
+        gsap.to(camera.position, {
+          x: 0,
+          y: 35,
+          z: 30,
+          duration: 1, // Thời gian chuyển đổi (giây)
+          ease: "power2.inOut", // Hiệu ứng easing
+          onUpdate: () => camera.lookAt(0, 0, 0), // Cập nhật hướng nhìn trong quá trình di chuyển
+        });
+      };
 
     useEffect(() => {
         let timeoutId;
+        let timeoutAction;
 
         if (gltf.animations && gltf.animations.length > 0) {
             mixer.current = new AnimationMixer(gltf.scene);
-            
+            resetCameraPosition();
             if (actionIndex >= 1 && actionIndex <= 3) {
                 const action = mixer.current.clipAction(gltf.animations[actionIndex - 1]);
 
@@ -42,10 +56,21 @@ const Model = ({ rotation, actionIndex, onActionComplete }) => {
                 action.setLoop(THREE.LoopOnce);
                 action.clampWhenFinished = true;
 
-                action.play();
-            } else if(actionIndex == 4){
+                timeoutAction = setTimeout(() => {
+                    action.play();
+                }, 2400);
+            } else if (actionIndex == 4) {
                 const action = mixer.current.clipAction(gltf.animations[4]);
 
+                action.reset();
+                action.setLoop(THREE.LoopOnce);
+                action.clampWhenFinished = true;
+
+                timeoutAction = setTimeout(() => {
+                    action.play();
+                }, 2400);
+            } else if (actionIndex == 0 && isRetrieve) {
+                const action = mixer.current.clipAction(gltf.animations[3]);
                 action.reset();
                 action.setLoop(THREE.LoopOnce);
                 action.clampWhenFinished = true;
@@ -53,16 +78,15 @@ const Model = ({ rotation, actionIndex, onActionComplete }) => {
                 action.play();
             }
 
-            mixer.current.addEventListener("finished", () => {
-                timeoutId = setTimeout(() => {
-                    onActionComplete(actionIndex);
-                }, 600);
-            });
+            timeoutId = setTimeout(() => {
+                onActionComplete(actionIndex);
+            }, 1200);
         }
 
         return () => {
-            if (timeoutId) {
+            if (timeoutId || timeoutAction) {
                 clearTimeout(timeoutId);
+                clearTimeout(timeoutAction);
             }
         };
     }, [gltf, actionIndex]);
@@ -89,18 +113,18 @@ const Model = ({ rotation, actionIndex, onActionComplete }) => {
 
         if (actionIndex === 0) {
             targetRotationY = THREE.MathUtils.degToRad(0);
-            targetRotationX = 0;
+            targetRotationX = THREE.MathUtils.degToRad(0);
         } else if (actionIndex === 1) {
-            targetRotationY = THREE.MathUtils.degToRad(40);  // Quay 50 độ theo chiều ngược chiều kim đồng hồ
+            targetRotationY = THREE.MathUtils.degToRad(400);
             targetRotationX = 0;
         } else if (actionIndex === 2) {
-            targetRotationY = THREE.MathUtils.degToRad(90);  // Quay 280 độ theo chiều kim đồng hồ
+            targetRotationY = THREE.MathUtils.degToRad(90);
             targetRotationX = 0;
         } else if (actionIndex === 3) {
-            targetRotationY = THREE.MathUtils.degToRad(180);  // Quay 280 độ theo chiều kim đồng hồ
+            targetRotationY = THREE.MathUtils.degToRad(180);
             targetRotationX = 0;
         } else if (actionIndex === 4) {
-            targetRotationY = THREE.MathUtils.degToRad(150);   // Quay 50 độ theo chiều ngược chiều kim đồng hồ
+            targetRotationY = THREE.MathUtils.degToRad(150);
             targetRotationX = THREE.MathUtils.degToRad(-20)
         }
 
@@ -108,13 +132,13 @@ const Model = ({ rotation, actionIndex, onActionComplete }) => {
         gsap.to(modelRef.current.rotation, {
             x: targetRotationX,
             y: targetRotationY,
-            duration: 1.2,
+            duration: 1,
             ease: "power2.inOut"
         });
     }, [actionIndex]);
 
 
-    return <primitive object={gltf.scene} ref={modelRef} position={[rotation.x, rotation.y, rotation.z]} />;
+    return <primitive object={gltf.scene} ref={modelRef} />;
 };
 
 const Pyramid = () => {
@@ -123,11 +147,15 @@ const Pyramid = () => {
     const [activeModal, setActiveModal] = useState(null); // Trạng thái lưu modal đang mở
     const [isRotate, setRotate] = useState(true);
     const [isDisable, setDisable] = useState(false);
+    const [isClosing, setIsClosing] = useState(false);
+    const [isRetrieve, setRetrieve] = useState(false);
+    const [defaultCamera] = useState({ x: 0, y: 35, z: 30 });
     let toastId = null;
 
     const randomAmount = (min = 5, max = 200) => {
         return (Math.random() * (max - min) + min).toFixed(2);
     };
+
 
     useEffect(() => {
         if (currentCoordinate.index === 0) {
@@ -137,7 +165,6 @@ const Pyramid = () => {
 
     const handleActionComplete = (index) => {
         setActiveModal(index); // Hiển thị modal tương ứng với actionIndex
-        setRotate(true);
     };
 
     useEffect(() => {
@@ -156,7 +183,7 @@ const Pyramid = () => {
                 Mined {randomAmount(5, 200)} KAS at 00:00:00 24/12/2024
             </div>
         );
-    
+
         // Check if the toast already exists, update it instead of dismissing
         if (toastId) {
             toast.update(toastId, {
@@ -180,22 +207,34 @@ const Pyramid = () => {
     };
 
     const next = () => {
-        if (isDisable) return;
         const newIndex = (corCount + 1) % coordinates.length;
-        setCorCount(newIndex);
-        setCurrentCoordinate(coordinates[newIndex]);
-        setRotate(false);
-        setDisable(true);
+        switchModal(newIndex);
     };
 
     const prev = () => {
-        if (isDisable) return;
         const newIndex = (corCount - 1 + coordinates.length) % coordinates.length;
+        switchModal(newIndex);
+    };
+
+    const switchModal = (newIndex) => {
+        if (currentCoordinate.index === 0 && newIndex > 0) {
+            setRotate(false);
+        }
+        if (currentCoordinate.index === 4 && newIndex === 0) {
+            continueRotation();
+            setRetrieve(true);
+        }
+
         setCorCount(newIndex);
         setCurrentCoordinate(coordinates[newIndex]);
-        setRotate(false);
-        setDisable(true);
+        if (activeModal) {
+            setActiveModal(0);
+        }
     };
+
+    const continueRotation = () => {
+        setRotate(true);
+    }
 
     const closeModal = () => {
         setActiveModal(null);
@@ -221,26 +260,29 @@ const Pyramid = () => {
                 </div>
             </header>
 
-            <Canvas camera={{ position: [0, 35, 30], fov: 80 }}>
+            <Canvas>
+                <PerspectiveCamera makeDefault position={[defaultCamera.x, defaultCamera.y, defaultCamera.z]} fov={60} />
                 <Environment files={IMAGE} background backgroundBlurriness={0.07} />
-                <directionalLight position={[3.3, 1.0, 4.4]} intensity={9000} />
+                <directionalLight position={[3.3, 1.0, 4.4]} intensity={6000} />
                 <Model
                     rotation={currentCoordinate.rotation}
                     actionIndex={currentCoordinate.index}
                     onActionComplete={handleActionComplete}
+                    isRetrieve={isRetrieve}
                 />
-                <OrbitControls autoRotate={false} enableZoom={true} />
+                <OrbitControls autoRotate={isRotate} enableZoom={false} enablePan={false} />
             </Canvas>
 
             <div className="button-container">
-                <GrCaretPrevious className={`button-item ${!isDisable ? 'active' : 'inactive'}`}  onClick={prev} />
-                <button disabled className="button-item section-name">{currentCoordinate.name}</button>
-                <GrCaretNext className={`button-item ${!isDisable ? 'active' : 'inactive'}`}  onClick={next} />
+                <GrCaretPrevious className={`button-item ${!isDisable ? 'active' : 'active'}`} onClick={prev} />
+                <button disabled className="button-item section-name">{currentCoordinate.name}
+                </button>
+                <GrCaretNext className={`button-item ${!isDisable ? 'active' : 'active'}`} onClick={next} />
             </div>
-            <ModalSection1 isOpen={activeModal === 1} onClose={closeModal} header={currentCoordinate.name} />
-            <ModalSection2 isOpen={activeModal === 2} onClose={closeModal} header={currentCoordinate.name} />
-            <ModalSection3 isOpen={activeModal === 3} onClose={closeModal} header={currentCoordinate.name} />
-            <ModalSection4 isOpen={activeModal === 4} onClose={closeModal} header={currentCoordinate.name} />
+            <ModalSection1 isOpen={activeModal === 1} isClosing={isClosing} onClose={closeModal} header={currentCoordinate.name} />
+            <ModalSection2 isOpen={activeModal === 2} isClosing={isClosing} onClose={closeModal} header={currentCoordinate.name} />
+            <ModalSection3 isOpen={activeModal === 3} isClosing={isClosing} onClose={closeModal} header={currentCoordinate.name} />
+            <ModalSection4 isOpen={activeModal === 4} isClosing={isClosing} onClose={closeModal} header={currentCoordinate.name} />
         </div>
     );
 };

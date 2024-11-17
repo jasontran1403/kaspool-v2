@@ -1,12 +1,12 @@
 import Modal from 'react-modal';
 
-const ModalSection4 = ({ isOpen, onClose, header }) => {
+const ModalSection4 = ({ isOpen, onClose, header, isClosing }) => {
   return (
     <Modal
       isOpen={isOpen}
       onRequestClose={onClose}
       contentLabel="Example Modal"
-      className="Modal__Content" // Custom modal content class
+      className={`Modal__Content Modal__Content__3 ${isClosing ? "closing" : "showing"}`}
       overlayClassName="Modal__Overlay" // Custom overlay class
       ariaHideApp={false} // This disables the aria-hidden on the app when the modal is open (optional)
     >

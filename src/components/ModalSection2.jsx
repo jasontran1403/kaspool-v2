@@ -1,22 +1,22 @@
 import Modal from 'react-modal';
 
-const ModalSection2 = ({ isOpen, onClose, header }) => {
+const ModalSection2 = ({ isOpen, onClose, header, isClosing }) => {
   return (
     <Modal
       isOpen={isOpen}
       onRequestClose={onClose}
       contentLabel="Example Modal"
-      className="Modal__Content" // Custom modal content class
+      className={`Modal__Content ${isClosing ? "closing" : "showing"}`}
       overlayClassName="Modal__Overlay" // Custom overlay class
       ariaHideApp={false} // This disables the aria-hidden on the app when the modal is open (optional)
     >
-      <div className="Modal__Header">{header}</div>
-      <button className="Modal__CloseButton" onClick={onClose}>×</button>
+      <div className="Modal__Header" style={{ textAlign: "left" }}>{header}</div>
+      {/* <button className="Modal__CloseButton" onClick={onClose}>×</button> */}
 
       {/* Render HTML content safely */}
       <div
         className="Modal__Body"
-        style={{ lineHeight: "35px" }}
+        style={{ lineHeight: "35px", textAlign: "left" }}
       >
         <h1 style={{ fontSize: "12px", fontStyle: "italic" }}>A blockchain solution platform is a comprehensive software or infrastructure that enables businesses and developers to build</h1>
         <div className="item">

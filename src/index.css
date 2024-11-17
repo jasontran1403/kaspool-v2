@@ -130,6 +130,7 @@ body {
   left: 50%;
   transform: translate(-50%, -14%);
   align-items: center;
+  z-index: 9999999999;
 }
 
 /* Basic modal overlay with blur effect */
@@ -144,6 +145,7 @@ body {
   justify-content: center;
   align-items: center;
   z-index: 999;
+  animation: slideUp 1s ease-in-out;
 }
 
 /* Modal Content */
@@ -155,13 +157,56 @@ body {
   width: 900px;
   min-width: auto;
   max-width: 90%;
-  max-height: 50svh;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  max-height: 30svh;
+  /* box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); */
   overflow-y: scroll;
   position: relative;
-  backdrop-filter: blur(10px);
+  /* backdrop-filter: blur(10px); */
   /* Thêm hiệu ứng làm mờ */
+  animation: slideUp 1s ease-in-out;
 }
+/* 
+.Modal__Content.showing {
+  animation: slideUp 1s ease-in-out;
+}
+
+.Modal__Content.closing {
+  animation: slideUpOut 1s ease-in-out;
+} */
+
+@keyframes slideUpOut {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+    display: none;
+  }
+  to {
+    transform: translateY(40px);
+    opacity: 0;
+    display: none;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(40px); /* Dịch xuống 20px */
+    opacity: 0; /* Bắt đầu trong suốt */
+  }
+  to {
+    transform: translateY(0); /* Trở về vị trí ban đầu */
+    opacity: 1; /* Hoàn toàn hiển thị */
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .Modal__Content:focus {
   outline: none; /* Removes focus-visible outline for accessibility */
 }
@@ -275,7 +320,7 @@ body {
 
 .custom-toast {
   position: relative; /* Để tạo layer cho pseudo-element */
-  width: 10svw;
+  min-width: 10svw;
   padding: 10px;
   color: whitesmoke;
   background-color: transparent;
@@ -315,7 +360,11 @@ body {
   }
 
   .Modal__Content {
-    margin-top: -180px;
+    margin-top: 120px;
+  }
+
+  .Modal__Content__3, .Modal__Content__4 {
+    margin-top: -280px!important;
   }
 
   .button-container {
